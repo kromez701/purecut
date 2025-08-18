@@ -34261,11 +34261,27 @@
           "3pack": "£49.99",
         };
 
-        // Original prices for calculating savings
-        this.originalPrices = {
-          "1pack": { price: "£29.99", fullPrice: null, savings: "£0.00" },
-          "2pack": { price: "£39.99", fullPrice: "£59.98", savings: "£19.99" },
-          "3pack": { price: "£49.99", fullPrice: "£89.97", savings: "£39.98" },
+        // Bundle pricing data
+        this.bundleData = {
+          "1pack": {
+            price: "£29.99",
+            originalPrice: null,
+            savings: "£0.00",
+            perItemSavings: "£0.00",
+          },
+          "2pack": {
+            price: "£39.99",
+            originalPrice: "£59.98", // 2 × £29.99
+            savings: "£19.99",
+            perItemSavings: "£9.99", // (£59.98 - £39.99) / 2
+          },
+          "3pack": {
+            price: "£49.99",
+            originalPrice: "£89.97", // 3 × £29.99
+            savings: "£39.98",
+            perItemSavings: "£13.33", // (£89.97 - £49.99) / 3
+            perItem: "£16.67", // £49.99 / 3
+          },
         };
 
         // URL mapping for different combinations
@@ -34357,26 +34373,25 @@
       }
 
       init() {
-        // Add event listeners for bundle selection
-        this.setupBundleListeners();
-
-        // Add event listeners for size variant selection
-        this.setupVariantListeners();
-
-        // Add event listener for add to cart button
-        this.setupAddToCartListener();
-
-        // Set initial prices for all variants
-        this.updateAllPrices();
+        // Wait a bit for DOM to be fully ready
+        setTimeout(() => {
+          this.setupBundleListeners();
+          this.setupVariantListeners();
+          this.setupAddToCartListener();
+          this.initializePrices();
+        }, 100);
       }
 
       setupBundleListeners() {
         const bundleRadios = document.querySelectorAll(
           'input[name^="kaching-bundles-deal"]'
         );
+        console.log("Found bundle radios:", bundleRadios.length);
+
         bundleRadios.forEach((radio) => {
           radio.addEventListener("change", () => {
-            this.updateAllPrices();
+            console.log("Bundle changed to:", radio.value);
+            this.updateMainPrice();
           });
         });
       }
@@ -34387,8 +34402,7 @@
         );
         variantSelects.forEach((select) => {
           select.addEventListener("change", () => {
-            // Price doesn't change based on size variants, only bundle type
-            // But we could add logic here if needed
+            console.log("Variant changed:", select.value);
           });
         });
       }
@@ -34405,6 +34419,74 @@
         }
       }
 
+      initializePrices() {
+        // Set up initial prices for all bundle bars
+        this.updateBundleBarPrices();
+        // Update main price based on selected bundle
+        this.updateMainPrice();
+      }
+
+      updateBundleBarPrices() {
+        // Update 1 Pack
+        const pack1Elements = this.getBundleElements("3U0s");
+        if (pack1Elements.priceEl) {
+          pack1Elements.priceEl.textContent = this.bundleData["1pack"].price;
+        }
+        if (pack1Elements.labelEl) {
+          pack1Elements.labelEl.textContent = `You Save an Extra ${this.bundleData["1pack"].savings}`;
+        }
+
+        // Update 2 Pack
+        const pack2Elements = this.getBundleElements("KXag");
+        if (pack2Elements.priceEl) {
+          pack2Elements.priceEl.textContent = this.bundleData["2pack"].price;
+        }
+        if (pack2Elements.fullPriceEl) {
+          pack2Elements.fullPriceEl.textContent =
+            this.bundleData["2pack"].originalPrice;
+        }
+        if (pack2Elements.labelEl) {
+          pack2Elements.labelEl.textContent = `You Save an Extra ${this.bundleData["2pack"].savings}`;
+        }
+        if (pack2Elements.subtitleEl) {
+          pack2Elements.subtitleEl.textContent = `You Save ${this.bundleData["2pack"].perItemSavings} Per Board`;
+        }
+
+        // Update 3 Pack
+        const pack3Elements = this.getBundleElements(
+          "15a4a41b-d376-4b89-bd33-d75904fc182e"
+        );
+        if (pack3Elements.priceEl) {
+          pack3Elements.priceEl.textContent = this.bundleData["3pack"].price;
+        }
+        if (pack3Elements.fullPriceEl) {
+          pack3Elements.fullPriceEl.textContent =
+            this.bundleData["3pack"].originalPrice;
+        }
+        if (pack3Elements.labelEl) {
+          pack3Elements.labelEl.textContent = `You Save ${this.bundleData["3pack"].perItemSavings} Per Board`;
+        }
+        if (pack3Elements.subtitleEl) {
+          pack3Elements.subtitleEl.textContent = `${this.bundleData["3pack"].perItem} per item`;
+        }
+      }
+
+      getBundleElements(bundleId) {
+        const bundleBar = document.querySelector(
+          `[data-deal-bar-id="${bundleId}"]`
+        );
+        if (!bundleBar) return {};
+
+        return {
+          priceEl: bundleBar.querySelector(".kaching-bundles__bar-price"),
+          fullPriceEl: bundleBar.querySelector(
+            ".kaching-bundles__bar-full-price"
+          ),
+          labelEl: bundleBar.querySelector(".kaching-bundles__bar-label"),
+          subtitleEl: bundleBar.querySelector(".kaching-bundles__bar-subtitle"),
+        };
+      }
+
       getSelectedBundle() {
         const selectedRadio = document.querySelector(
           'input[name^="kaching-bundles-deal"]:checked'
@@ -34412,9 +34494,13 @@
         if (!selectedRadio) return null;
 
         const bundleBar = selectedRadio.closest(".kaching-bundles__bar");
-        const title = bundleBar
-          .querySelector(".kaching-bundles__bar-title")
-          .textContent.trim();
+        if (!bundleBar) return null;
+
+        const titleEl = bundleBar.querySelector(".kaching-bundles__bar-title");
+        if (!titleEl) return null;
+
+        const title = titleEl.textContent.trim();
+        console.log("Bundle title:", title);
 
         if (title.includes("1 Pack")) return "1pack";
         if (title.includes("2 Pack")) return "2pack";
@@ -34443,15 +34529,40 @@
         return variants;
       }
 
-      updatePrice() {
+      updateMainPrice() {
         const selectedBundle = this.getSelectedBundle();
+        console.log("Updating main price for bundle:", selectedBundle);
+
         if (!selectedBundle) return;
 
-        const priceElement = document.querySelector(
-          "#p-price-g4iVDy-jTQ .gp-price"
-        );
+        // Try multiple selectors for the main price element
+        const possibleSelectors = [
+          "#p-price-g4iVDy-jTQ .gp-price",
+          '[id*="p-price"] .gp-price',
+          ".gp-price",
+          ".gp-money",
+        ];
+
+        let priceElement = null;
+        for (let selector of possibleSelectors) {
+          priceElement = document.querySelector(selector);
+          if (priceElement) {
+            console.log("Found price element with selector:", selector);
+            break;
+          }
+        }
+
         if (priceElement) {
-          priceElement.textContent = this.prices[selectedBundle];
+          const newPrice = this.prices[selectedBundle];
+          console.log("Setting price to:", newPrice);
+          priceElement.textContent = newPrice;
+        } else {
+          console.error("Could not find main price element");
+          // Log all elements that might be price elements for debugging
+          const allPriceElements = document.querySelectorAll(
+            '[class*="price"], [id*="price"]'
+          );
+          console.log("All price-related elements:", allPriceElements);
         }
       }
 
@@ -34462,6 +34573,13 @@
       handleAddToCart() {
         const selectedBundle = this.getSelectedBundle();
         const selectedVariants = this.getSelectedVariants();
+
+        console.log(
+          "Add to cart - Bundle:",
+          selectedBundle,
+          "Variants:",
+          selectedVariants
+        );
 
         if (
           !selectedBundle ||
@@ -34474,7 +34592,6 @@
           return;
         }
 
-        // Check if all variants are selected
         const expectedVariantCount =
           selectedBundle === "1pack" ? 1 : selectedBundle === "2pack" ? 2 : 3;
 
@@ -34487,13 +34604,12 @@
         const redirectUrl = this.urlMappings[selectedBundle][variantKey];
 
         if (redirectUrl) {
-          // Add the selected bundle and variants to the URL as additional parameters
           const url = new URL(redirectUrl, window.location.origin);
           url.searchParams.append("bundle", selectedBundle);
           url.searchParams.append("variants", variantKey);
           url.searchParams.append("price", this.prices[selectedBundle]);
 
-          // Redirect to the cart with the selected variants
+          console.log("Redirecting to:", url.toString());
           window.location.href = url.toString();
         } else {
           console.error(
@@ -34507,7 +34623,7 @@
         }
       }
 
-      // Debug method to see current selection
+      // Debug method
       debugCurrentSelection() {
         console.log("Selected Bundle:", this.getSelectedBundle());
         console.log("Selected Variants:", this.getSelectedVariants());
@@ -34518,18 +34634,25 @@
       }
     }
 
-    // Initialize the handler when the DOM is loaded
-    document.addEventListener("DOMContentLoaded", () => {
-      new BundleVariantHandler();
-    });
-
-    // Alternative initialization for when script is loaded after DOM
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", () => {
+    // Initialize when DOM is ready
+    function initializeBundleHandler() {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => {
+          new BundleVariantHandler();
+        });
+      } else {
         new BundleVariantHandler();
-      });
-    } else {
-      new BundleVariantHandler();
+      }
     }
+
+    // Run initialization
+    initializeBundleHandler();
+
+    // Also try to initialize after a short delay in case of dynamic content
+    setTimeout(() => {
+      if (!window.bundleHandler) {
+        window.bundleHandler = new BundleVariantHandler();
+      }
+    }, 500);
   </script>
 </html>
