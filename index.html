@@ -33974,7 +33974,7 @@
     });
   </script>
 
-  <script>
+  <!-- <script>
     // Bundle and variant selection handler
     class BundleVariantHandler {
       constructor() {
@@ -34094,6 +34094,289 @@
         bundleRadios.forEach((radio) => {
           radio.addEventListener("change", () => {
             this.updatePrice();
+          });
+        });
+      }
+
+      setupVariantListeners() {
+        const variantSelects = document.querySelectorAll(
+          ".kaching-bundles__bar-variant-select"
+        );
+        variantSelects.forEach((select) => {
+          select.addEventListener("change", () => {
+            // Price doesn't change based on size variants, only bundle type
+            // But we could add logic here if needed
+          });
+        });
+      }
+
+      setupAddToCartListener() {
+        const addToCartButton = document.querySelector(
+          'button[aria-label="ADD TO CART"]'
+        );
+        if (addToCartButton) {
+          addToCartButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.handleAddToCart();
+          });
+        }
+      }
+
+      getSelectedBundle() {
+        const selectedRadio = document.querySelector(
+          'input[name^="kaching-bundles-deal"]:checked'
+        );
+        if (!selectedRadio) return null;
+
+        const bundleBar = selectedRadio.closest(".kaching-bundles__bar");
+        const title = bundleBar
+          .querySelector(".kaching-bundles__bar-title")
+          .textContent.trim();
+
+        if (title.includes("1 Pack")) return "1pack";
+        if (title.includes("2 Pack")) return "2pack";
+        if (title.includes("3 Pack")) return "3pack";
+
+        return null;
+      }
+
+      getSelectedVariants() {
+        const selectedBundle = this.getSelectedBundle();
+        if (!selectedBundle) return null;
+
+        const selectedRadio = document.querySelector(
+          'input[name^="kaching-bundles-deal"]:checked'
+        );
+        const bundleBar = selectedRadio.closest(".kaching-bundles__bar");
+        const variantSelects = bundleBar.querySelectorAll(
+          ".kaching-bundles__bar-variant-select"
+        );
+
+        const variants = [];
+        variantSelects.forEach((select) => {
+          variants.push(select.value);
+        });
+
+        return variants;
+      }
+
+      updatePrice() {
+        const selectedBundle = this.getSelectedBundle();
+        if (!selectedBundle) return;
+
+        const priceElement = document.querySelector(
+          "#p-price-g4iVDy-jTQ .gp-price"
+        );
+        if (priceElement) {
+          priceElement.textContent = this.prices[selectedBundle];
+        }
+      }
+
+      generateVariantKey(variants) {
+        return variants.join("_");
+      }
+
+      handleAddToCart() {
+        const selectedBundle = this.getSelectedBundle();
+        const selectedVariants = this.getSelectedVariants();
+
+        if (
+          !selectedBundle ||
+          !selectedVariants ||
+          selectedVariants.length === 0
+        ) {
+          alert(
+            "Please select a bundle and all size variants before adding to cart."
+          );
+          return;
+        }
+
+        // Check if all variants are selected
+        const expectedVariantCount =
+          selectedBundle === "1pack" ? 1 : selectedBundle === "2pack" ? 2 : 3;
+
+        if (selectedVariants.length !== expectedVariantCount) {
+          alert("Please select all size variants before adding to cart.");
+          return;
+        }
+
+        const variantKey = this.generateVariantKey(selectedVariants);
+        const redirectUrl = this.urlMappings[selectedBundle][variantKey];
+
+        if (redirectUrl) {
+          // Add the selected bundle and variants to the URL as additional parameters
+          const url = new URL(redirectUrl, window.location.origin);
+          url.searchParams.append("bundle", selectedBundle);
+          url.searchParams.append("variants", variantKey);
+          url.searchParams.append("price", this.prices[selectedBundle]);
+
+          // Redirect to the cart with the selected variants
+          window.location.href = url.toString();
+        } else {
+          console.error(
+            "No URL mapping found for:",
+            selectedBundle,
+            variantKey
+          );
+          alert(
+            "Sorry, this variant combination is not available. Please try a different selection."
+          );
+        }
+      }
+
+      // Debug method to see current selection
+      debugCurrentSelection() {
+        console.log("Selected Bundle:", this.getSelectedBundle());
+        console.log("Selected Variants:", this.getSelectedVariants());
+        console.log(
+          "Variant Key:",
+          this.generateVariantKey(this.getSelectedVariants() || [])
+        );
+      }
+    }
+
+    // Initialize the handler when the DOM is loaded
+    document.addEventListener("DOMContentLoaded", () => {
+      new BundleVariantHandler();
+    });
+
+    // Alternative initialization for when script is loaded after DOM
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        new BundleVariantHandler();
+      });
+    } else {
+      new BundleVariantHandler();
+    }
+  </script> -->
+
+  <script>
+    // Bundle and variant selection handler
+    class BundleVariantHandler {
+      constructor() {
+        // Price mapping for different packs
+        this.prices = {
+          "1pack": "£29.99",
+          "2pack": "£39.99",
+          "3pack": "£49.99",
+        };
+
+        // Original prices for calculating savings
+        this.originalPrices = {
+          "1pack": { price: "£29.99", fullPrice: null, savings: "£0.00" },
+          "2pack": { price: "£39.99", fullPrice: "£59.98", savings: "£19.99" },
+          "3pack": { price: "£49.99", fullPrice: "£89.97", savings: "£39.98" },
+        };
+
+        // URL mapping for different combinations
+        this.urlMappings = {
+          "1pack": {
+            'S (30x20cm / 12"x8")': "/cart/add?variant_id=1pack_small",
+            'M (38x25cm / 15"x10")': "/cart/add?variant_id=1pack_medium",
+            'L (45x30cm / 18"x12")': "/cart/add?variant_id=1pack_large",
+          },
+          "2pack": {
+            'S (30x20cm / 12"x8")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=2pack_small_small",
+            'S (30x20cm / 12"x8")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=2pack_small_medium",
+            'S (30x20cm / 12"x8")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=2pack_small_large",
+            'M (38x25cm / 15"x10")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=2pack_medium_small",
+            'M (38x25cm / 15"x10")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=2pack_medium_medium",
+            'M (38x25cm / 15"x10")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=2pack_medium_large",
+            'L (45x30cm / 18"x12")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=2pack_large_small",
+            'L (45x30cm / 18"x12")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=2pack_large_medium",
+            'L (45x30cm / 18"x12")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=2pack_large_large",
+          },
+          "3pack": {
+            'S (30x20cm / 12"x8")_S (30x20cm / 12"x8")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=3pack_small_small_small",
+            'S (30x20cm / 12"x8")_S (30x20cm / 12"x8")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=3pack_small_small_medium",
+            'S (30x20cm / 12"x8")_S (30x20cm / 12"x8")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=3pack_small_small_large",
+            'S (30x20cm / 12"x8")_M (38x25cm / 15"x10")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=3pack_small_medium_small",
+            'S (30x20cm / 12"x8")_M (38x25cm / 15"x10")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=3pack_small_medium_medium",
+            'S (30x20cm / 12"x8")_M (38x25cm / 15"x10")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=3pack_small_medium_large",
+            'S (30x20cm / 12"x8")_L (45x30cm / 18"x12")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=3pack_small_large_small",
+            'S (30x20cm / 12"x8")_L (45x30cm / 18"x12")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=3pack_small_large_medium",
+            'S (30x20cm / 12"x8")_L (45x30cm / 18"x12")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=3pack_small_large_large",
+            'M (38x25cm / 15"x10")_S (30x20cm / 12"x8")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=3pack_medium_small_small",
+            'M (38x25cm / 15"x10")_S (30x20cm / 12"x8")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=3pack_medium_small_medium",
+            'M (38x25cm / 15"x10")_S (30x20cm / 12"x8")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=3pack_medium_small_large",
+            'M (38x25cm / 15"x10")_M (38x25cm / 15"x10")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=3pack_medium_medium_small",
+            'M (38x25cm / 15"x10")_M (38x25cm / 15"x10")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=3pack_medium_medium_medium",
+            'M (38x25cm / 15"x10")_M (38x25cm / 15"x10")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=3pack_medium_medium_large",
+            'M (38x25cm / 15"x10")_L (45x30cm / 18"x12")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=3pack_medium_large_small",
+            'M (38x25cm / 15"x10")_L (45x30cm / 18"x12")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=3pack_medium_large_medium",
+            'M (38x25cm / 15"x10")_L (45x30cm / 18"x12")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=3pack_medium_large_large",
+            'L (45x30cm / 18"x12")_S (30x20cm / 12"x8")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=3pack_large_small_small",
+            'L (45x30cm / 18"x12")_S (30x20cm / 12"x8")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=3pack_large_small_medium",
+            'L (45x30cm / 18"x12")_S (30x20cm / 12"x8")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=3pack_large_small_large",
+            'L (45x30cm / 18"x12")_M (38x25cm / 15"x10")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=3pack_large_medium_small",
+            'L (45x30cm / 18"x12")_M (38x25cm / 15"x10")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=3pack_large_medium_medium",
+            'L (45x30cm / 18"x12")_M (38x25cm / 15"x10")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=3pack_large_medium_large",
+            'L (45x30cm / 18"x12")_L (45x30cm / 18"x12")_S (30x20cm / 12"x8")':
+              "/cart/add?variant_id=3pack_large_large_small",
+            'L (45x30cm / 18"x12")_L (45x30cm / 18"x12")_M (38x25cm / 15"x10")':
+              "/cart/add?variant_id=3pack_large_large_medium",
+            'L (45x30cm / 18"x12")_L (45x30cm / 18"x12")_L (45x30cm / 18"x12")':
+              "/cart/add?variant_id=3pack_large_large_large",
+          },
+        };
+
+        this.init();
+      }
+
+      init() {
+        // Add event listeners for bundle selection
+        this.setupBundleListeners();
+
+        // Add event listeners for size variant selection
+        this.setupVariantListeners();
+
+        // Add event listener for add to cart button
+        this.setupAddToCartListener();
+
+        // Set initial prices for all variants
+        this.updateAllPrices();
+      }
+
+      setupBundleListeners() {
+        const bundleRadios = document.querySelectorAll(
+          'input[name^="kaching-bundles-deal"]'
+        );
+        bundleRadios.forEach((radio) => {
+          radio.addEventListener("change", () => {
+            this.updateAllPrices();
           });
         });
       }
