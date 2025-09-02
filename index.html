@@ -234,7 +234,7 @@
       {
         "shopId": 88255430937,
         "countryCode": "AU",
-        "currencyCode": "EUR",
+        "currencyCode": "GBP",
         "merchantCapabilities": ["supports3DS"],
         "merchantId": "gid:\/\/shopify\/Shop\/88255430937",
         "merchantName": "Pure Cut",
@@ -261,7 +261,7 @@
       var Shopify = Shopify || {};
       Shopify.shop = "2b1716-f6.myshopify.com";
       Shopify.locale = "en";
-      Shopify.currency = { active: "EUR", rate: "0.8744613" };
+      Shopify.currency = { active: "GBP", rate: "0.8744613" };
       Shopify.country = "NL";
       Shopify.theme = {
         name: "impulse-theme-SP-Checkout",
@@ -422,7 +422,7 @@
         a: 88255430937,
         offset: 36000,
         reqid: "3294ebef-2da9-435a-b59e-98f82a7b0efb-1755532901",
-        pageurl:
+        pagGBPl:
           "purecut.co\/collections\/shop-all\/products\/titanpros-cutting-board",
         u: "7b65cf48710e",
         p: "product",
@@ -900,7 +900,7 @@
                   node: {
                     price: {
                       amount: `${normalisedPrice}`,
-                      currencyCode: "EUR",
+                      currencyCode: "GBP",
                     },
                   },
                 },
@@ -970,7 +970,7 @@
                   node: {
                     price: {
                       amount: `${normalisedPrice}`,
-                      currencyCode: "EUR",
+                      currencyCode: "GBP",
                     },
                   },
                 },
@@ -1040,7 +1040,7 @@
                   node: {
                     price: {
                       amount: `${normalisedPrice}`,
-                      currencyCode: "EUR",
+                      currencyCode: "GBP",
                     },
                   },
                 },
@@ -1802,7 +1802,7 @@
           Name: "TitanPro© Cutting Board",
           ProductID: 9874386354457,
           Categories: ["Shop All"],
-          ImageURL:
+          ImagGBPL:
             "https://purecut.co/cdn/shop/files/1_5355d332-39a0-487c-8f76-4b979a24b2e2_grande.png?v=1754449575",
           URL: "https://purecut.co/products/titanpros-cutting-board",
           Brand: "Pure Cut",
@@ -1817,7 +1817,7 @@
             Title: item.Name,
             ItemId: item.ProductID,
             Categories: item.Categories,
-            ImageUrl: item.ImageURL,
+            ImagGBPl: item.ImagGBPL,
             Url: item.URL,
             Metadata: {
               Brand: item.Brand,
@@ -1879,7 +1879,7 @@
         collection: "492634800409",
         cart: "drawer",
         template: "product",
-        curr: "EUR" || "USD",
+        curr: "GBP" || "USD",
       }),
         (function (W, H, A, L, E, _, B, N) {
           function O(U, T, P, H, R) {
@@ -2114,19 +2114,19 @@
             f = (null != o ? o : { modern: "", legacy: "" })[c],
             m = (function (e) {
               return [
-                e.baseUrl,
+                e.basGBPl,
                 "/wpm",
                 "/b",
                 e.hashVersion,
                 "modern" === e.buildTarget ? "m" : "l",
                 ".js",
               ].join("");
-            })({ baseUrl: r, hashVersion: n, buildTarget: c }),
+            })({ basGBPl: r, hashVersion: n, buildTarget: c }),
             p = (function (e) {
               var d = e.version,
                 r = e.bundleTarget,
                 n = e.surface,
-                o = e.pageUrl,
+                o = e.pagGBPl,
                 i = e.monorailEndpoint;
               return {
                 emit: function (e) {
@@ -2186,7 +2186,7 @@
               version: n,
               bundleTarget: u,
               surface: e.surface,
-              pageUrl: self.location.href,
+              pagGBPl: self.location.href,
               monorailEndpoint: e.monorailEndpoint,
             });
           try {
@@ -2287,8 +2287,8 @@
       })(
         {
           shopId: 88255430937,
-          storefrontBaseUrl: "https://purecut.co",
-          extensionsBaseUrl:
+          storefrontBasGBPl: "https://purecut.co",
+          extensionsBasGBPl:
             "https://extensions.shopifycdn.com/cdn/shopifycloud/web-pixels-manager",
           monorailEndpoint:
             "https://monorail-edge.shopifysvc.com/unstable/produce_batch",
@@ -2441,7 +2441,7 @@
             checkout: null,
             productVariants: [
               {
-                price: { amount: 34.95, currencyCode: "EUR" },
+                price: { amount: 77.00, currencyCode: "GBP" },
                 product: {
                   title: "TitanPro© Cutting Board",
                   vendor: "Pure Cut",
@@ -2459,7 +2459,7 @@
                 untranslatedTitle: 'S (30x20cm \/ 12"x8")',
               },
               {
-                price: { amount: 39.95, currencyCode: "EUR" },
+                price: { amount: 39.95, currencyCode: "GBP" },
                 product: {
                   title: "TitanPro© Cutting Board",
                   vendor: "Pure Cut",
@@ -2477,7 +2477,7 @@
                 untranslatedTitle: 'M (38x25cm \/ 15"x10")',
               },
               {
-                price: { amount: 42.95, currencyCode: "EUR" },
+                price: { amount: 42.95, currencyCode: "GBP" },
                 product: {
                   title: "TitanPro© Cutting Board",
                   vendor: "Pure Cut",
@@ -2504,8 +2504,8 @@
         { modern: "", legacy: "" },
         {
           shopId: "88255430937",
-          storefrontBaseUrl: "https:\/\/purecut.co",
-          extensionBaseUrl:
+          storefrontBasGBPl: "https:\/\/purecut.co",
+          extensionBasGBPl:
             "https:\/\/extensions.shopifycdn.com\/cdn\/shopifycloud\/web-pixels-manager",
           surface: "storefront-renderer",
           enabledBetaFlags: '["ac843a20", "c2aeb305"]',
@@ -2513,14 +2513,14 @@
           hashVersion: "87104074w193399d0p9c2c7174m0f111275",
           publish: "custom",
           events:
-            '[["page_viewed",{}],["product_viewed",{"productVariant":{"price":{"amount":34.95,"currencyCode":"EUR"},"product":{"title":"TitanPro© Cutting Board","vendor":"Pure Cut","id":"9874386354457","untranslatedTitle":"TitanPro© Cutting Board","url":"\/products\/titanpros-cutting-board","type":""},"id":"50497110212889","image":{"src":"\/\/purecut.co\/cdn\/shop\/files\/1_5355d332-39a0-487c-8f76-4b979a24b2e2.png?v=1754449575"},"sku":null,"title":"S (30x20cm \/ 12\\"x8\\")","untranslatedTitle":"S (30x20cm \/ 12\\"x8\\")"}}]]',
+            '[["page_viewed",{}],["product_viewed",{"productVariant":{"price":{"amount":77.00,"currencyCode":"GBP"},"product":{"title":"TitanPro© Cutting Board","vendor":"Pure Cut","id":"9874386354457","untranslatedTitle":"TitanPro© Cutting Board","url":"\/products\/titanpros-cutting-board","type":""},"id":"50497110212889","image":{"src":"\/\/purecut.co\/cdn\/shop\/files\/1_5355d332-39a0-487c-8f76-4b979a24b2e2.png?v=1754449575"},"sku":null,"title":"S (30x20cm \/ 12\\"x8\\")","untranslatedTitle":"S (30x20cm \/ 12\\"x8\\")"}}]]',
         }
       );
     </script>
     <script>
       window.ShopifyAnalytics = window.ShopifyAnalytics || {};
       window.ShopifyAnalytics.meta = window.ShopifyAnalytics.meta || {};
-      window.ShopifyAnalytics.meta.currency = "EUR";
+      window.ShopifyAnalytics.meta.currency = "GBP";
       var meta = {
         product: {
           id: 9874386354457,
@@ -2721,7 +2721,7 @@
               themeId: 168834335001,
               themeCityHash: "5930539334237562526",
               contentLanguage: "en",
-              currency: "EUR",
+              currency: "GBP",
               eventMetadataId: "ee4e0a99-dab7-423f-9706-d69330387775",
             },
             isServerSideCookieWritingEnabled: true,
@@ -2765,12 +2765,12 @@
             window.ShopifyAnalytics.lib.track(
               "Viewed Product",
               {
-                currency: "EUR",
+                currency: "GBP",
                 variantId: 50497110212889,
                 productId: 9874386354457,
                 productGid: "gid:\/\/shopify\/Product\/9874386354457",
                 name: 'TitanPro© Cutting Board - S (30x20cm \/ 12"x8")',
-                price: "34.95",
+                price: "77.00",
                 sku: null,
                 brand: "Pure Cut",
                 variant: 'S (30x20cm \/ 12"x8")',
@@ -2784,12 +2784,12 @@
             window.ShopifyAnalytics.lib.track(
               "monorail:\/\/trekkie_storefront_viewed_product\/1.1",
               {
-                currency: "EUR",
+                currency: "GBP",
                 variantId: 50497110212889,
                 productId: 9874386354457,
                 productGid: "gid:\/\/shopify\/Product\/9874386354457",
                 name: 'TitanPro© Cutting Board - S (30x20cm \/ 12"x8")',
-                price: "34.95",
+                price: "77.00",
                 sku: null,
                 brand: "Pure Cut",
                 variant: 'S (30x20cm \/ 12"x8")',
@@ -2816,7 +2816,7 @@
       src="https://purecut.co/cdn/shopifycloud/perf-kit/shopify-perf-kit-2.0.4.min.js"
       data-application="storefront-renderer"
       data-shop-id="88255430937"
-      data-render-region="gcp-europe-west1"
+      data-render-region="gcp-GBPope-west1"
       data-page-type="product"
       data-theme-instance-id="168834335001"
       data-theme-name="Impulse"
@@ -3098,7 +3098,7 @@
                     >
                       Checkout •
                       <div id="cart-drawer-total-price" data-subtotal>
-                        €0,00 EUR
+                        €0,00 GBP
                       </div>
                     </button>
 
@@ -3792,7 +3792,7 @@
                 // Map currencies to their most common locales
                 const currencyLocaleMap = {
                   USD: "en-US",
-                  EUR: "de-DE", // Using German locale for Euro (uses comma as decimal)
+                  GBP: "de-DE", // Using German locale for GBPo (uses comma as decimal)
                   GBP: "en-GB",
                   CAD: "en-CA",
                   AUD: "en-AU",
@@ -4279,7 +4279,7 @@
                           <input
                             type="hidden"
                             name="currency_code"
-                            value="EUR"
+                            value="GBP"
                             data-disclosure-input
                           />
                         </div>
@@ -33181,7 +33181,7 @@
                       <input
                         type="hidden"
                         name="currency_code"
-                        value="EUR"
+                        value="GBP"
                         data-disclosure-input
                       />
                     </div>
@@ -34270,7 +34270,7 @@
             perItemSavings: "£0.00",
           },
           "2pack": {
-            price: "££53.00",
+            price: "£53.00",
             originalPrice: "£59.98", // 2 × £29.99
             savings: "£19.99",
             perItemSavings: "£9.99", // (£59.98 - £39.99) / 2
