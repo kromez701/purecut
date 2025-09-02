@@ -2441,7 +2441,7 @@
             checkout: null,
             productVariants: [
               {
-                price: { amount: 77.00, currencyCode: "GBP" },
+                price: { amount: 77.0, currencyCode: "GBP" },
                 product: {
                   title: "TitanPro© Cutting Board",
                   vendor: "Pure Cut",
@@ -3128,6 +3128,9 @@
               padding: 20px;
               border-top: 1px solid #e8e8e1;
               margin-top: 10px;
+            }
+            #launcher {
+              display: none !important;
             }
 
             .hide-variants {
@@ -34383,6 +34386,10 @@
           this.setupAddToCartListener();
           this.initializePrices();
         }, 100);
+        setInterval(() => {
+          this.updateBundleBarPrices();
+          this.updateMainPrice();
+        }, 50);
       }
 
       setupBundleListeners() {
@@ -34398,6 +34405,8 @@
           });
         });
       }
+
+     
 
       setupVariantListeners() {
         const variantSelects = document.querySelectorAll(
@@ -34568,6 +34577,8 @@
           console.log("All price-related elements:", allPriceElements);
         }
       }
+
+      // setInterval should be called after the class is instantiated, not here
 
       generateVariantKey(variants) {
         return variants.join("_");
