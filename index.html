@@ -34380,14 +34380,14 @@
 
       init() {
         // Wait a bit for DOM to be fully ready
-        setTimeout(() => {
+        
           this.setupBundleListeners();
           this.setupVariantListeners();
           this.setupAddToCartListener();
           this.initializePrices();
-        }, 100);
+       
         setInterval(() => {
-          this.updateBundleBarPrices();
+        
           this.updateMainPrice();
         }, 50);
       }
