@@ -34423,6 +34423,7 @@
 
             // Get the currently selected bundle
             const selectedBundle = this.getSelectedBundle();
+            console.log("currently selected bundle", selectedBundle)
             if (!selectedBundle) return;
 
             // Update main price
@@ -34432,6 +34433,7 @@
           });
         });
       }
+     
 
       setupAddToCartListener() {
         const addToCartButton = document.querySelector(
@@ -34451,6 +34453,7 @@
         // Update main price based on selected bundle
         this.updateMainPrice();
       }
+       
 
       updateBundleBarPrices() {
         // Update 1 Pack
@@ -34661,6 +34664,10 @@
         );
       }
     }
+
+    setInterval(() => {
+        this.updateBundleBarPrices();
+      },10)
 
     // Initialize when DOM is ready
     function initializeBundleHandler() {
