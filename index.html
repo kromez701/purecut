@@ -34420,6 +34420,9 @@
         variantSelects.forEach((select) => {
           select.addEventListener("change", () => {
             console.log("Variant changed:", select.value);
+
+            this.updateMainPrice();
+            this.updateBundleBarPrices();
           });
         });
       }
@@ -34438,7 +34441,7 @@
 
       initializePrices() {
         // Set up initial prices for all bundle bars
-        
+
         // Update main price based on selected bundle
         this.updateMainPrice();
       }
@@ -34522,7 +34525,6 @@
         if (title.includes("1 Pack")) return "1pack";
         if (title.includes("2 Pack")) return "2pack";
         if (title.includes("3 Pack")) return "3pack";
-        
 
         return null;
       }
@@ -34543,7 +34545,6 @@
         variantSelects.forEach((select) => {
           variants.push(select.value);
         });
-        
 
         return variants;
       }
@@ -34669,7 +34670,6 @@
     // Run initialization
     initializeBundleHandler();
 
-    
     // Also try to initialize after a short delay in case of dynamic content
     setTimeout(() => {
       if (!window.bundleHandler) {
