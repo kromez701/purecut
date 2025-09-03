@@ -34394,9 +34394,7 @@
         this.setupAddToCartListener();
         this.initializePrices();
 
-        setInterval(() => {
-          this.updateMainPrice();
-        }, 50);
+        this.updateMainPrice();
       }
 
       setupBundleListeners() {
@@ -34654,25 +34652,15 @@
     }
 
     // Initialize when DOM is ready
-    function initializeBundleHandler() {
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () => {
-          new BundleVariantHandler();
-        });
-      } else {
-        new BundleVariantHandler();
-      }
-    }
 
     // Run initialization
-    initializeBundleHandler();
 
     // Also try to initialize after a short delay in case of dynamic content
-    setTimeout(() => {
+    document.addEventListener("DOMContentLoaded", () => {
       if (!window.bundleHandler) {
         window.bundleHandler = new BundleVariantHandler();
       }
-    }, 500);
+    });
   </script>
 
   <script>
