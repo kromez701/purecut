@@ -34397,10 +34397,20 @@
 
         this.updateMainPrice();
         this.updateBundleBarPrices();
-
+        this.enforcePricesSoon();
         setInterval(() => {
           this.updateBundleBarPrices();
         }, 10);
+      }
+
+      enforcePricesSoon() {
+        const apply = () => {
+          this.updateMainPrice();
+          this.updateBundleBarPrices();
+        };
+        apply(); // now
+        requestAnimationFrame(apply); // next frame
+        setTimeout(apply, 50); // after small async work
       }
 
       setupBundleListeners() {
@@ -34411,8 +34421,8 @@
 
         bundleRadios.forEach((radio) => {
           radio.addEventListener("change", () => {
+            this.enforcePricesSoon();
             console.log("Bundle changed to:", radio.value);
-            this.updateMainPrice();
           });
         });
       }
@@ -34423,17 +34433,7 @@
         );
         variantSelects.forEach((select) => {
           select.addEventListener("change", () => {
-            console.log("Variant changed:", select.value);
-
-            // Get the currently selected bundle
-            const selectedBundle = this.getSelectedBundle();
-            console.log("currently selected bundle", selectedBundle);
-            if (!selectedBundle) return;
-
-            // Update main price
-            this.updateMainPrice();
-
-            this.updateBundleBarPrices();
+            this.enforcePricesSoon();
           });
         });
       }
@@ -34458,48 +34458,55 @@
       }
 
       updateBundleBarPrices() {
-        // Update 1 Pack
-        const pack1Elements = this.getBundleElements("3U0s");
-        if (pack1Elements.priceEl) {
-          pack1Elements.priceEl.textContent = this.bundleData["1pack"].price;
-        }
-        if (pack1Elements.labelEl) {
-          pack1Elements.labelEl.textContent = `You Save an Extra ${this.bundleData["1pack"].savings}`;
-        }
+        const bars = document.querySelectorAll(".kaching-bundles__bar");
 
-        // Update 2 Pack
-        const pack2Elements = this.getBundleElements("KXag");
-        if (pack2Elements.priceEl) {
-          pack2Elements.priceEl.textContent = this.bundleData["2pack"].price;
-        }
-        if (pack2Elements.fullPriceEl) {
-          pack2Elements.fullPriceEl.textContent =
-            this.bundleData["2pack"].originalPrice;
-        }
-        if (pack2Elements.labelEl) {
-          pack2Elements.labelEl.textContent = `You Save an Extra ${this.bundleData["2pack"].savings}`;
-        }
-        if (pack2Elements.subtitleEl) {
-          pack2Elements.subtitleEl.textContent = `You Save ${this.bundleData["2pack"].perItemSavings} Per Board`;
-        }
+        bars.forEach((bar) => {
+          const titleEl = bar.querySelector(".kaching-bundles__bar-title");
+          if (!titleEl) return;
 
-        // Update 3 Pack
-        const pack3Elements = this.getBundleElements(
-          "15a4a41b-d376-4b89-bd33-d75904fc182e"
-        );
-        if (pack3Elements.priceEl) {
-          pack3Elements.priceEl.textContent = this.bundleData["3pack"].price;
-        }
-        if (pack3Elements.fullPriceEl) {
-          pack3Elements.fullPriceEl.textContent =
-            this.bundleData["3pack"].originalPrice;
-        }
-        if (pack3Elements.labelEl) {
-          pack3Elements.labelEl.textContent = `You Save ${this.bundleData["3pack"].perItemSavings} Per Board`;
-        }
-        if (pack3Elements.subtitleEl) {
-          pack3Elements.subtitleEl.textContent = `${this.bundleData["3pack"].perItem} per item`;
-        }
+          const title = (titleEl.textContent || "").trim();
+          const key = title.includes("1 Pack")
+            ? "1pack"
+            : title.includes("2 Pack")
+            ? "2pack"
+            : title.includes("3 Pack")
+            ? "3pack"
+            : null;
+
+          if (!key) return;
+
+          const data = this.bundleData[key];
+          if (!data) return;
+
+          const priceEl = bar.querySelector(".kaching-bundles__bar-price");
+          const fullPriceEl = bar.querySelector(
+            ".kaching-bundles__bar-full-price"
+          );
+          const labelEl = bar.querySelector(".kaching-bundles__bar-label");
+          const subtitleEl = bar.querySelector(
+            ".kaching-bundles__bar-subtitle"
+          );
+
+          if (priceEl) priceEl.textContent = data.price;
+          if (fullPriceEl) fullPriceEl.textContent = data.originalPrice || "";
+
+          // Keep your existing label logic but tie it to the bundle key
+          if (labelEl) {
+            if (key === "1pack") {
+              labelEl.textContent = `You Save an Extra ${data.savings}`;
+            } else if (key === "2pack") {
+              labelEl.textContent = `You Save an Extra ${data.savings}`;
+            } else if (key === "3pack") {
+              labelEl.textContent = `You Save ${data.perItemSavings} Per Board`;
+            }
+          }
+
+          if (subtitleEl) {
+            subtitleEl.textContent = data.perItem
+              ? `${data.perItem} per item`
+              : "";
+          }
+        });
       }
 
       getBundleElements(bundleId) {
