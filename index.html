@@ -34396,6 +34396,7 @@
         this.initializePrices();
 
         this.updateMainPrice();
+        this.updateBundleBarPrices();
       }
 
       setupBundleListeners() {
@@ -34437,7 +34438,7 @@
 
       initializePrices() {
         // Set up initial prices for all bundle bars
-        this.updateBundleBarPrices();
+        
         // Update main price based on selected bundle
         this.updateMainPrice();
       }
@@ -34521,7 +34522,7 @@
         if (title.includes("1 Pack")) return "1pack";
         if (title.includes("2 Pack")) return "2pack";
         if (title.includes("3 Pack")) return "3pack";
-        this.updateBundleBarPrices();
+        
 
         return null;
       }
@@ -34542,7 +34543,7 @@
         variantSelects.forEach((select) => {
           variants.push(select.value);
         });
-        this.updateBundleBarPrices();
+        
 
         return variants;
       }
@@ -34668,10 +34669,7 @@
     // Run initialization
     initializeBundleHandler();
 
-    setInterval(() => {
-      this.updateBundleBarPrices();
-    }, 50);
-
+    
     // Also try to initialize after a short delay in case of dynamic content
     setTimeout(() => {
       if (!window.bundleHandler) {
