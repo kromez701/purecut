@@ -34394,9 +34394,40 @@
         this.setupVariantListeners();
         this.setupAddToCartListener();
         this.initializePrices();
-
+        this.setupVariantPriceLock();
         this.updateMainPrice();
         this.updateBundleBarPrices();
+      }
+
+      setupVariantPriceLock() {
+        const bundleIdMap = {
+          "1pack": "3U0s",
+          "2pack": "KXag",
+          "3pack": "15a4a41b-d376-4b89-bd33-d75904fc182e",
+        };
+
+        Object.entries(bundleIdMap).forEach(([bundleKey, bundleId]) => {
+          const bundleBar = document.querySelector(
+            `[data-deal-bar-id="${bundleId}"]`
+          );
+          if (!bundleBar) return;
+
+          const priceEl = bundleBar.querySelector(
+            ".kaching-bundles__bar-price"
+          );
+          if (!priceEl) return;
+
+          const observer = new MutationObserver(() => {
+            // Force the price to stay constant
+            priceEl.textContent = this.bundleData[bundleKey].price;
+          });
+
+          observer.observe(priceEl, {
+            childList: true,
+            characterData: true,
+            subtree: true,
+          });
+        });
       }
 
       setupBundleListeners() {
