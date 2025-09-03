@@ -1087,6 +1087,10 @@
         background-color: #fff1e3;
         color: #412d00;
       }
+      .gp-price,
+      .gp-money {
+        visibility: hidden;
+      }
       #alia-popup-root-alia-cks3yrij2fbs6bgg {
         display: none !important;
       }
@@ -6254,7 +6258,7 @@
                                             <div>
                                               <div
                                                 data-gp-text
-                                                class="gp-prices gp-moneys gp-text-instants"
+                                                class="gp-price gp-money gp-text-instant"
                                                 style="
                                                   --w: 100%;
                                                   --tdc: #dc0000;
@@ -10497,7 +10501,7 @@
                                         <div>
                                           <div
                                             data-gp-text
-                                            class="gp-prices gp-moneys gp-text-instants"
+                                            class="gp-price gp-money gp-text-instant"
                                             style="
                                               --w: 100%;
                                               --tdc: #dc0000;
@@ -12714,9 +12718,6 @@
                                     .kaching-bundles
                                     .kaching-bundles__bar-variant-names {
                                     display: none;
-                                  }
-                                  .sc-1o8glcn-0.gwgkTo {
-                                    display: none !important;
                                   }
                                   .gV4bL5qlii
                                     .kaching-bundles
@@ -34554,8 +34555,8 @@
         const possibleSelectors = [
           "#p-price-g4iVDy-jTQ .gp-price",
           '[id*="p-price"] .gp-price',
-          ".gp-prices",
-          ".gp-moneys",
+          ".gp-price",
+          ".gp-money",
         ];
 
         let priceElement = null;
@@ -34671,5 +34672,58 @@
         window.bundleHandler = new BundleVariantHandler();
       }
     }, 500);
+  </script>
+
+  <script>
+    // Very early override
+    (function () {
+      const prices = {
+        "1pack": "£30.00",
+        "2pack": "£53.00",
+        "3pack": "£77.00",
+      };
+
+      function getDefaultBundle() {
+        // If one is pre-checked, use that, else fallback
+        const selectedRadio = document.querySelector(
+          'input[name^="kaching-bundles-deal"]:checked'
+        );
+        if (selectedRadio) {
+          const title =
+            selectedRadio
+              .closest(".kaching-bundles__bar")
+              ?.querySelector(".kaching-bundles__bar-title")?.textContent || "";
+          if (title.includes("1 Pack")) return "1pack";
+          if (title.includes("2 Pack")) return "2pack";
+          if (title.includes("3 Pack")) return "3pack";
+        }
+        return "1pack"; // fallback
+      }
+
+      function setInitialPrice() {
+        const bundle = getDefaultBundle();
+        const selectors = [
+          "#p-price-g4iVDy-jTQ .gp-price",
+          '[id*="p-price"] .gp-price',
+          ".gp-price",
+          ".gp-money",
+        ];
+        for (let selector of selectors) {
+          const el = document.querySelector(selector);
+          if (el) {
+            el.textContent = prices[bundle];
+            el.style.visibility = "visible";
+            break;
+          }
+        }
+      }
+
+      // Run ASAP
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setInitialPrice);
+      } else {
+        setInitialPrice();
+      }
+    })();
   </script>
 </html>
