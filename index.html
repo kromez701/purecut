@@ -34403,9 +34403,6 @@
         this.updateMainPrice();
         this.updateBundleBarPrices();
         this.enforcePricesSoon();
-        setInterval(() => {
-          this.updateBundleBarPrices();
-        }, 10);
       }
 
       enforcePricesSoon() {
@@ -34619,6 +34616,7 @@
       handleAddToCart() {
         const selectedBundle = this.getSelectedBundle();
         const selectedVariants = this.getSelectedVariants();
+        this.enforcePricesSoon();
 
         console.log(
           "Add to cart - Bundle:",
