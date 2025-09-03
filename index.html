@@ -1091,7 +1091,8 @@
         display: none !important;
       }
       iframe[title="Close message"],
-      iframe[title="Message from company"], iframe[title="Button to launch messaging window"]  {
+      iframe[title="Message from company"],
+      iframe[title="Button to launch messaging window"] {
         display: none !important; /* example: hide it */
       }
       .gp-price,
@@ -34449,6 +34450,7 @@
         if (addToCartButton) {
           addToCartButton.addEventListener("click", (e) => {
             e.preventDefault();
+            this.enforcePricesSoon();
             this.handleAddToCart();
           });
         }
