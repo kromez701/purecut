@@ -13910,6 +13910,7 @@
                                           }
                                           .shipping-estimate__date {
                                             font-weight: 500;
+                                            visibility: hidden;
                                           }
                                           .shipping-estimate__free {
                                             align-items: center;
@@ -34751,5 +34752,16 @@
         setInitialPrice();
       }
     })();
+  </script>
+
+  <script>
+    const shippingDateDiv = document.querySelector(".shipping-estimate__date");
+    const shippingDate = new Date();
+    const options = { month: "short", day: "2-digit" };
+    const formatted = today.toLocaleDateString("en-US", options);
+    if (shippingDateDiv) {
+      shippingDateDiv.textContent = formatted;
+      shippingDateDiv.style.visibility = "visible";
+    }
   </script>
 </html>
