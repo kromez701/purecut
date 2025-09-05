@@ -34759,7 +34759,10 @@
     const shippingDate = new Date();
     const options = { month: "short", day: "2-digit" };
     const formatted = today.toLocaleDateString("en-US", options);
+    console.log("Shipping date div:", shippingDateDiv);
     if (shippingDateDiv) {
+      console.log("Setting shipping date to:", formatted);
+      console.log("Shipping date div:", shippingDateDiv);
       shippingDateDiv.textContent = formatted;
       shippingDateDiv.style.visibility = "visible";
     }
